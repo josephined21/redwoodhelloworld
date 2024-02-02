@@ -1,0 +1,35 @@
+env:
+  VERCEL_ORG_ID: ${{ secrets.DEV_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  NEXTAUTH_URL: ${{ secrets.DEV_URL }}
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  EMAIL_SERVER_HOST: ${{ secrets.EMAIL_SERVER_HOST }}
+  EMAIL_SERVER_PORT: ${{ secrets.EMAIL_SERVER_PORT }}
+  EMAIL_SERVER_USER: ${{ secrets.EMAIL_SERVER_USER }}
+  EMAIL_SERVER_PASSWORD: ${{ secrets.EMAIL_SERVER_PASSWORD }}
+  EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+  GIT_ID: ${{ secrets.GIT_ID }}
+  GIT_SECRET: ${{ secrets.GIT_SECRET }}
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  Deploy-Development:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        working-directory: frontend
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        working-directory: frontend
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        working-directory: frontend
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
